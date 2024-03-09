@@ -45,10 +45,12 @@ namespace CDiRipper
             for (int i = 0; i < width * height; i++)
             {
                 int dat = dataArray.ReadByte();
+                if (dat == -1) break;
                 int nb = 1;
                 if ((dat & 0x80) != 0)
                 {
                     nb = dataArray.ReadByte();
+                    if (nb == -1) break;
                 }
                 if (nb == 0) nb = width - (i % width);
 
@@ -79,10 +81,14 @@ namespace CDiRipper
 
             Bitmap output = new Bitmap(width, height);
 
+            MemoryStream dataArray = new MemoryStream(imageData);
+            dataArray.Seek(0, SeekOrigin.Begin);
+
             for (int i = 0; i < width * height; i++)
             {
-                if (i >= imageData.Length) break;
-                output.SetPixel(i % width, i / width, palette[imageData[i] & 0x7F]);
+                int dat = dataArray.ReadByte();
+                if (dat == -1) break;
+                output.SetPixel(i % width, i / width, palette[dat & 0x7F]);
             }
 
             return output;
