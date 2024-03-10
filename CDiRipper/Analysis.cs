@@ -49,11 +49,11 @@ namespace CDiRipper
                     list.Add(i);
                     while (true)
                     {
-                        i++;
-                        if (i >= amountSectors) break;
                         byte submode = Data[(i * 0x930) + 0x12];
                         if ((submode & 0x81) != 0) break;
                         if ((submode & 0x40) == 0) break;
+                        i++;
+                        if (i >= amountSectors) break;
                     }
                 }
             }
@@ -114,6 +114,20 @@ namespace CDiRipper
                         curId++;
                     }
                     if (curId != id) continue;
+
+                    if (palette == null)
+                    {
+                        //Get palette from previous sector
+                        for (int j = i - 1; j >= 0; j--)
+                        {
+                            byte submodePal = Data[(j * 0x930) + 0x12];
+                            if ((submodePal & 0x0E) == 8)
+                            {
+                                palette = Image.GetPalette(Data, j, 128);
+                                break;
+                            }
+                        }
+                    }
                     switch (codeInfo & 0x0F)
                     {
                         case 0x01:
