@@ -13,7 +13,7 @@ namespace CDiRipper
         public static Color[] GetPalette(byte[] array, int sector, int amount)
         {
             byte[] sectorData = Program.GetCDiSectorArray(array, sector);
-            int offset = 24;    //TODO PLTE check
+            int offset = 24;
 
             Color[] pal = new Color[amount];
 
@@ -39,8 +39,16 @@ namespace CDiRipper
 
             Bitmap output = new Bitmap(width, height);
 
+            //Check for IDAT
+            int offset = 0;
+            foreach (int i in Program.SearchBytePattern(imageData, Encoding.ASCII.GetBytes("IDAT")))
+            {
+                offset = i + 8;
+                break;
+            }
+
             MemoryStream dataArray = new MemoryStream(imageData);
-            dataArray.Seek(0, SeekOrigin.Begin);
+            dataArray.Seek(offset, SeekOrigin.Begin);
 
             for (int i = 0; i < width * height; i++)
             {
@@ -81,8 +89,16 @@ namespace CDiRipper
 
             Bitmap output = new Bitmap(width, height);
 
+            //Check for IDAT
+            int offset = 0;
+            foreach (int i in Program.SearchBytePattern(imageData, Encoding.ASCII.GetBytes("IDAT")))
+            {
+                offset = i + 8;
+                break;
+            }
+
             MemoryStream dataArray = new MemoryStream(imageData);
-            dataArray.Seek(0, SeekOrigin.Begin);
+            dataArray.Seek(offset, SeekOrigin.Begin);
 
             for (int i = 0; i < width * height; i++)
             {
