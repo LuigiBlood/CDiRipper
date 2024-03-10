@@ -37,7 +37,7 @@ namespace CDiRipper
 
                     foreach (int offset in Program.LoadedFile.RTStartSectors)
                     {
-                        listBoxIndex.Items.Add("0x" + offset.ToString("X"));
+                        listBoxIndex.Items.Add(offset + " - 0x" + (offset * 0x930).ToString("X"));
                     }
 
                     this.Text = "CD-i Ripper [" + Path.GetFileName(ofs.FileName) + "]";
