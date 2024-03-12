@@ -70,7 +70,8 @@ namespace CDiRipper
                 byte submode = sectorData[18];
 
                 //Check if the Data is real time
-                if ((submode & 0b01000000) == 0) break;
+				//0b01000000
+                if ((submode & 64) == 0) break;
 
                 //Check for Data Type
                 if ((submode & 0x0E) == 8) break;    //Data
@@ -81,7 +82,8 @@ namespace CDiRipper
                 data.AddRange(GetSubarray(sectorData, 24, 0x930 - 24 - 4));
 
                 //Check for End
-                if ((submode & 0b10000001) != 0) break;
+				//0b10000001
+                if ((submode & 129) != 0) break;
                 //if (data.Count >= length) break;
             } while (true);
 

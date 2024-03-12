@@ -49,12 +49,16 @@ namespace CDiRipper
         {
             //pictureBoxImage.Image = Image.GetIDAT(Program.LoadedFile.Data, Program.LoadedFile.IDATSectors[listBoxIndex.SelectedIndex]);
             numericUpDown1.Value = 0;
+			if(pictureBoxImage.Image != null)
+				pictureBoxImage.Image.Dispose();
             pictureBoxImage.Image = Program.LoadedFile.GetImage(Program.LoadedFile.RTStartSectors[listBoxIndex.SelectedIndex], (int)numericUpDown1.Value);
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
             //pictureBoxImage.Image = Image.GetIDAT(Program.LoadedFile.Data, Program.LoadedFile.IDATSectors[listBoxIndex.SelectedIndex]);
+			if(pictureBoxImage.Image != null)
+				pictureBoxImage.Image.Dispose();
             pictureBoxImage.Image = Program.LoadedFile.GetImage(Program.LoadedFile.RTStartSectors[listBoxIndex.SelectedIndex], (int)numericUpDown1.Value);
         }
     }
