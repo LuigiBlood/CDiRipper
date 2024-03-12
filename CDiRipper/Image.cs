@@ -24,7 +24,7 @@ namespace CDiRipper
                 int b = sectorData[(i * 3) + 2 + offset];
                 pal[i] = Color.FromArgb(r, g, b);
             }
-
+			
             return pal;
         }
 
@@ -38,6 +38,7 @@ namespace CDiRipper
             int height = 280;
 
             Bitmap output = new Bitmap(width, height);
+			var bm = output.LockBits(new Rectangle(0, 0, width, height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
             //Check for IDAT
             int offset = 0;
@@ -64,17 +65,21 @@ namespace CDiRipper
 
                 while (nb > 1)
                 {
-                    if ((i / width) >= height) return output;
-                    output.SetPixel(i % width, i / width, palette[dat & 0x7F]);
+                    if ((i / width) >= height) goto end;
+                    //output.SetPixel(i % width, i / width, palette[dat & 0x7F]);
+					SetBitmapPixel(bm, i, palette[dat & 0x7F]);
                     i++;
                     nb--;
                 }
 
-                if ((i / width) >= height) return output;
+                if ((i / width) >= height) goto end;
 
-                output.SetPixel(i % width, i / width, palette[dat & 0x7F]);
+                //output.SetPixel(i % width, i / width, palette[dat & 0x7F]);
+				SetBitmapPixel(bm, i, palette[dat & 0x7F]);
             }
-
+end:
+			dataArray.Dispose();
+			output.UnlockBits(bm);
             return output;
         }
 
@@ -88,6 +93,7 @@ namespace CDiRipper
             int height = 280;
 
             Bitmap output = new Bitmap(width, height);
+			var bm = output.LockBits(new Rectangle(0, 0, width, height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
             //Check for IDAT
             int offset = 0;
@@ -104,10 +110,20 @@ namespace CDiRipper
             {
                 int dat = dataArray.ReadByte();
                 if (dat == -1) break;
-                output.SetPixel(i % width, i / width, palette[dat & 0x7F]);
+                //output.SetPixel(i % width, i / width, palette[dat & 0x7F]);
+				SetBitmapPixel(bm, i, palette[dat & 0x7F]);
             }
-
+			dataArray.Dispose();
+			output.UnlockBits(bm);
             return output;
         }
+
+		public unsafe static void SetBitmapPixel(System.Drawing.Imaging.BitmapData bm, int pixel, Color clr)
+		{
+			*(byte*)(bm.Scan0 + pixel * 4 + 0) = clr.B;
+			*(byte*)(bm.Scan0 + pixel * 4 + 1) = clr.G;
+			*(byte*)(bm.Scan0 + pixel * 4 + 2) = clr.R;
+			*(byte*)(bm.Scan0 + pixel * 4 + 3) = clr.A;
+		}
     }
 }
